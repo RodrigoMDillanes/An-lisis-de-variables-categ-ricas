@@ -1,0 +1,58 @@
+#http://wwwf.imperial.ac.uk/~das01/RCourse/hills.txt
+hills <- data.frame(read.delim("/Users/rodrigomondragondillanes/Desktop/hills_converted.txt",sep = ""))
+pairs(hills)
+attach(hills)
+plot(dist,time)
+identify(dist,time,row.names(hills)) #Para marcar los valores atipicos, debe de cambiar el cursor 
+#sobre el grafico, al finalizar la seleccion damos click derecho para terminar o en finalizar
+modelo1 <- lm(time~dist)
+summary(modelo1)
+abline(modelo1)
+#X11()
+plot(modelo1)
+pi <- 9090
+ls()
+hills.copia <- hills
+#CREANDO VECTORES
+coeffs <- sample(-20:20,3,replace = T) #Generamos num aleatorios de una ecuacion cuadratica
+class(coeffs)
+names(coeffs)
+names(coeffs) <- c("a","b","c")
+x <- seq(-3,3,length=200) #Creando una secuencia
+x
+class(x)
+coeffs
+coeffs[2]
+y <- coeffs[1]*x^2+coeffs[2]*x+coeffs[3]
+plot(x,y)
+plot(y=y,x=x)
+coeffs[2]^2-4*coeffs[1]*coeffs[3]
+disc <- .Last.value #Para guardar el utimo valor del comando ejecutado
+chr.vec <- sample(letters,5);chr.vec[2]
+ #______________________________________________
+         ####### PRACTICA 1 #############
+#1.- Calcular las raíces reales de la ecuacion cuadrática a=1, b=1, c=1 igualada a cero
+#2.- Generar una "rejilla"(plano cartesiano) de -50 a 50
+#Construir las graficas de las funciones log(x), exp(x), sin(x),sin(2x)
+#De la funcion sin(x)/cos(x) examinar la suma acumulada con el comando
+#cumsum(x)
+
+############################   1
+a<-1
+b <- 1
+c <- 1
+#Calculando discriminante
+disc <- b^2-4*a*c
+#disc es negativo, por lo tanto tiene raices complejas
+sqrt(disc)
+
+############################   2
+
+x <- seq(-50,50,length=200)
+plot(x=x,y=log(x),xlim = c(-50,50),ylim = c(-50,50))
+plot(x=x,y=exp(x),xlim = c(-50,50),ylim = c(-50,50))
+plot(x=x,y=sin(x),xlim = c(-50,50),ylim = c(-50,50))
+plot(x=x,y=sin(2*x),xlim = c(-50,50),ylim = c(-50,50))
+plot(x=x,y=(sin(x)/cos(x)),xlim = c(-50,50),ylim = c(-50,50))
+sumaacumulada <- cumsum(sin(x)/cos(x))
+sumaacumulada
