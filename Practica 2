@@ -1,0 +1,112 @@
+x <- c(1,2,3)
+x
+x[1]
+x[4] #NA 
+x[4] <- 5
+x
+1/0
+-1/0
+Inf/Inf #NaN cuando se presentan problemas de este tipo
+x<-seq(-3,3)
+x
+x<-seq(-3,3,length=200)
+x
+numeric(0)
+y <- pi
+y
+round(y,7)
+help("trunc")
+floor(y) #Piso
+ceiling(y) #Techo
+log(14,exp(1))
+log(14) #Calcula por defecto ln
+min(x)
+max(x)
+sum(x)
+prod(x)
+length(x)
+cumsum(x)
+cumprod(x)
+cummax(x)
+cummin(x)
+#deberian de dar el mismo resultado
+sum(x)/length(x)
+mean(x)
+#Numeros factorales
+prod(1:5)
+#Calculando varianza muestral
+sum(x-mean(x))^2/(length(x)-1)
+#Vector caracter
+x2 <- c("23","543")
+class(x2)
+#Vector lógico
+x <- 1
+y <- 1
+#Evaluaciones logicas
+x==1
+y==1
+x==3
+x!=3 #!= diferente (! es negacion)
+x==1 & y==1 #Para que sea verdadero los dos deben de ser verdaderos
+x==1 && y==1
+z <- 1:6
+z>2 & z<5 #Evalua la expresion entrada por entrada
+z[z>2 & z<5] #Arroja los valores que son T en la evaluacion logica
+
+z>2 && z<5 #Nada mas compara la expresion con el primer valor del vector
+z[1]>2 # para este ejemplo es equivalente a la expresion de arriba
+z[z>2 && z<5] #Evalua de izq a der solo la primer entrada
+
+#________________
+x <- seq(-3,3,length=200) > 0
+x #Vector logico
+!x #Negando el vector
+#Tablas de verdad
+# (conjuncion ^) es verdadero si ambos son verdadero
+c(T,T,F,F) & c(T,F,T,F)
+1:3 + c(T,F,T) #Algebra boleana T=1 F=0
+
+#Conjuntos
+#A={1,2,...,10}
+#B={5,6,...,15}
+intersect(1:10,5:15) #Interseccion
+help("factor")
+bebidas <- factor(c("cerveza","cerveza","agua","refresco")) #Nos dice las categorias que hay en el vector
+bebidas
+unclass(bebidas) # MUY INTERESANTE, LEER
+#Disyuncion (o)
+#Es verdadero si uno de los dos es verdadero
+x <- 1
+y
+(x!=5)|(y==3)
+(x!=5)||(y==3) # analogo a &&
+
+##### PRACTICA 2
+#1.- Calcular la tabla de verdad de la disyuncion. R calcula la disyuncion exclusiva, ¿Cual es la
+#diferencia con la tabla p<-c(V,V,F,F);q<-c(V,F,V,F); p|q == c(V,V,V,F)
+#2.- Considere el vector 1:k donde k es entero positivo, escribir un comando en R que determine
+#cuantas entradas del vector son divisibles por 3
+#3.- Del vector bebidas escribir un comando en R que evalúe la proporción de "cerveza" en el
+#vector
+
+########### 1
+p<-c(T,T,F,F)
+q<-c(T,F,T,F)
+p|q #No existe inguna direfencia, R calcula por default la inclusiva 
+
+
+########### 2 
+k <- 100
+vec <- 1:k
+div<-vec/3
+is.wholenumber <-
+  function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol #Funcion obtenida de help("integer")
+a <- is.wholenumber(div) #Si es TRUE es porque es entero
+table(a)
+
+
+########### 3
+bebidas
+unclass(bebidas)
+vec <- bebidas=="cerveza"
+table(vec)["TRUE"]/length(vec) #Proporcion de cerveza en el vector 1:2
