@@ -1,0 +1,56 @@
+hills <- data.frame(read.delim("/Users/rodrigomondragondillanes/Desktop/hills_converted.txt",sep = "")) #Misma que practica 1
+row.names(hills) #Nombre de filas
+names(hills) #Nombre de columnas
+x1.df <- data.frame(1:10,I(letters[1:10]),factor(letters[1:10])) #?I
+x2.df <- data.frame(X1=1:10,X2=I(letters[1:10]),X3=factor(letters[1:10]))
+x2.df$X1
+columna <- x2.df$X1
+mean(x2.df$X1)
+x.mat <- matrix(1:12,nrow = 3,ncol = 4) #Los acomoda por columa
+x.mat
+x.mat <- matrix(1:12,nrow = 3,ncol = 4,byrow = T) #Lo acomoda por filas
+x.mat
+t(x.mat) #Transpuesta de una matriz
+dimnames(x.mat) #NULL , no hay asociado un nombre
+dimnames(x.mat) <- list(letters[1:3],letters[1:4]) #Usando matriz original, dimnames es para matriz
+dimnames(x.mat)
+x.mat
+xx <- cbind(x.mat,x.mat) #Pegamos dos matrices de manteniendo el mismo numero de filas y aumentando columnas, tener cuidado con las dimensiones de la matriz
+xx
+xxx <- rbind(x.mat,x.mat) #Pegamos filas manteniendo las mismas columnas
+xxx
+x <- 1:10
+names(x)
+names(x) <- letters[x]
+x
+class(x)
+x[1:3]
+x[c(1,7,10)]
+x[c(-1,-2)] #Elimina las entradas del vector
+x[x>5]
+x[c("a","i")]
+x[]#Muestra todo el vector
+
+jj1 <- matrix(1:100,ncol = 10) #No hace falta el otro argumento porque la queremos cuadrada
+jj1
+jj1[1:5,]
+jj1[,6:10]
+jj1[4,9]
+jj1[1:4,x[x<3]]
+
+lapply(hills,sum) #Suma valores por columna
+sapply(hills,sum)
+
+x.list <- list(a=1:10,b=letters[1:3],c=matrix(1:10,ncol = 2))
+x.list
+x.list$c
+x.list[[3]]
+x.mat <- x.list$c
+x.mat
+####Aritmética de matrices
+x.mat+1 #Suma 1 a cada entrada
+x.mat+x.mat
+x.mat*x.mat #Multiplica entrada por entrada
+x.mat%*%t(x.mat)
+apply(x.mat,1,sum) #Suma por filas
+apply(x.mat,2,sum) #Suma por columnas
