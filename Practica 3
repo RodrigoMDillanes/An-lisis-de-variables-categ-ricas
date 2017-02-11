@@ -47,10 +47,58 @@ x.list$c
 x.list[[3]]
 x.mat <- x.list$c
 x.mat
-####Aritmética de matrices
+####Aritm??tica de matrices
 x.mat+1 #Suma 1 a cada entrada
 x.mat+x.mat
 x.mat*x.mat #Multiplica entrada por entrada
 x.mat%*%t(x.mat)
 apply(x.mat,1,sum) #Suma por filas
 apply(x.mat,2,sum) #Suma por columnas
+
+#################  Practica 3
+#1.- construir un marco de datos de X <- 2x2, experimentar con X^(1:k) donde k={1,2,3,4}
+#??que sucede si quitan el parentesis?
+#2.- La funcion system.time regresa el conteo del tiempo para las operaciones en R.
+#Examinar la ayuda para dicha funcion.
+#Para una matriz de 10^(7)*2, "X", y un vector "y" de longitud 10^(7/2) (misma longitud de las columnas de la matriz)
+#Calcular (al menos 4 veces con valores distintos de "X" y "y") X^(t)*y usando la multiplicaci??n dematrices y la funcion crossproduct
+#??Cu??l es m??s r??pida?
+
+#1
+#install.packages("matrixcalc")  
+#require(matrixcalc)
+#matrix.power(matriz,1:2)
+matriz <- matrix(2:5,nrow = 2)
+matriz^(1:1) #Arroja el valor de la matriz original
+matriz^(1:2) #eleva al cuadrado la segunda fila
+matriz^(1:3) #
+matriz^(1:4) #
+matriz^1:1
+matriz^1:2
+matriz^1:3
+matriz^1:4
+
+#2
+?system.time
+#Primera prueba
+x <- matrix(sample(1:20^7,2*10^2,replace = T),nrow = 10^7,ncol = 2)
+system.time(matrix(sample(1:20^7,2*10^2,replace = T),nrow = 10^7,ncol = 2)) #Tarda 1.663
+y <- sample(1:10^7,10^7,replace = T)
+system.time(t(x)%*%y) #tarda 0.097
+system.time(crossprod(x,y))#Tarda 0.061
+#Segunda prueba
+x <- matrix(sample(80000:200000,2*10^2,replace = T),nrow = 10^7,ncol = 2)
+y <- sample(30000:90000000,10^7,replace = T)
+system.time(t(x)%*%y) #tarda 0.074
+system.time(crossprod(x,y))#Tarda 0.065
+#Tercera prueba
+x <- matrix(sample(-800:3000000,2*10^2,replace = T),nrow = 10^7,ncol = 2)
+y <- sample(4500:780000,10^7,replace = T)
+system.time(t(x)%*%y) #tarda 0.071
+system.time(crossprod(x,y))#Tarda 0.065
+#Cuarta prueba
+x <- matrix(sample(7659:7675657,2*10^2,replace = T),nrow = 10^7,ncol = 2)
+y <- sample(-3426:8907643,10^7,replace = T)
+system.time(t(x)%*%y) #tarda 0.081
+system.time(crossprod(x,y))#Tarda 0.066
+#Es mas rapida la funcion crossprod y no es necesatio trasponer la matriz
