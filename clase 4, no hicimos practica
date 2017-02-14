@@ -1,0 +1,81 @@
+x <- 1:10
+names(x) <- LETTERS[x]
+x[8]
+x["H"]
+x[4:6] #O haciendo referencia a las letras
+x[c(-3,-9)]
+x[c("C","I")] # investigar como eliminar con las letras
+x[x>6]
+x.list <- list(a=1:10,b=letters[1:3],c=matrix(1:10,ncol = 2))
+x.list
+x.list$a
+x.list[[1]]
+x.mat <- x.list[[3]]
+x.mat
+x.mat+4 #Estrictamente en algebra lineal no se puede hacer esta operacion, pero R lo suma entrada por entrada
+x.mat+x.mat
+y <- c(4,6,2,7,9)
+t(x.mat)%*%y
+crossprod(x.mat,y)
+solve(x.mat) # Teniendo que ser cuadrada pero se obtiene la inversa
+apply(x.mat,1,sum)
+apply(x.mat,2,sum)
+attributes(x.mat) #podemos darnos una idea de que objeto ocupa mas memoria en R
+args(c) #Para obtener los argumento de las funciones
+args(lm)
+args(plot)
+ls(all=T) #Nos muestra todos los obejtos en nuestra memoria
+class(xx)
+searchpaths() #Muestra donde va guardar las librerias 
+search() #Muestra valores de la memoria ocultos, mas tecnico
+jj2 <- matrix(ncol=5,nrow = 3,data = 30:44) 
+jj2
+rm(y) #Eliminando objetos
+rm(list = objects(pattern = "jj*")) #Elimina los objetos que empiecen con jj
+rm(x2.df,xx,xxx)
+ls()
+row.names(hills)
+names(hills)
+a.df <- data.frame() #Creamos un data frame vacio
+fix(a.df) #Checarlo porque no corre en mac
+search()
+attach(hills)
+search() #Fue agregado el objeto hills
+setwd("/Users/rodrigomondragondillanes/Documents/Análisis de variables categóricas") #Fijamos un directorio
+write.table(hills,"test.txt")
+sin(matrix(0,ncol = 8000,nrow = 8000)) #Cuando queramos interrumpir una accion es con escape (esc)
+#### ESTADISTICA BASICA
+x <- rnorm(50)
+y <- rnorm(50,0,1)
+?rnorm
+x
+mean(x)
+sqrt(var(x))
+sd(x)
+cor(x,y)
+summary(x)
+#Prob de que sea mayor a un valor  >
+1-pnorm(1.644) #Tenemos que usar el complemento, de otro modo seria un <
+qexp(0.72,2) #Prob de que sea sea mayor a .72 si se distribuye exp(2) <- revisar
+
+require(MASS)
+sample(c("cara","cruz"),10,prob = c(.3,.7),replace = T) #Experimento de un lanzamiento de una moneda no balanceada , 10 intentos
+help(package="MASS")
+set.seed(1) #Para obtener numeros aleatorios iguales
+runif(10)
+runif(10)
+X11() #Revisar porque no corre en mac
+plot(qexp(ppoints(x),1,sort(x)))
+abline(0,1)
+qqplot(x,y)
+abline(0,1)
+boxplot(x,y) #Diagramas de cajas
+plot(c(x,y),rep(0:1,c(length(x),length(y))),xlab = "",ylab = "")
+par(mfrow=c(2,1)) #Divide el plot enviroment en dos (usamos notacion matricial) INTERESANTE!!!!
+hist(x)
+boxplot(y)
+#https://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/
+PrimaIndiansDiabetes <- read.csv("prima.csv")
+attach(PrimaIndiansDiabetes)
+par(mfrow=c(1,1))
+plot(X6,X148,type = "n") #No grafica nada
