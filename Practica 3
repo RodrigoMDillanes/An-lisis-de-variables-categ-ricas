@@ -38,7 +38,7 @@ jj1[,6:10]
 jj1[4,9]
 jj1[1:4,x[x<3]]
 
-lapply(hills,sum) #Suma valores por columna
+lapply(hills,sum) #Suma valores por columna, pero en forma de lista
 sapply(hills,sum)
 
 x.list <- list(a=1:10,b=letters[1:3],c=matrix(1:10,ncol = 2))
