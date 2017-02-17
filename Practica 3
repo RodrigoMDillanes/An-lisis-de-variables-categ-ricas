@@ -38,7 +38,7 @@ jj1[,6:10]
 jj1[4,9]
 jj1[1:4,x[x<3]]
 
-lapply(hills,sum) #Suma valores por columna, pero en forma de lista
+lapply(hills,sum) #Suma valores por columna
 sapply(hills,sum)
 
 x.list <- list(a=1:10,b=letters[1:3],c=matrix(1:10,ncol = 2))
@@ -68,15 +68,17 @@ apply(x.mat,2,sum) #Suma por columnas
 #install.packages("matrixcalc")  
 #require(matrixcalc)
 #matrix.power(matriz,1:2)
-matriz <- matrix(2:5,nrow = 2)
+matriz <- matrix(1:4,nrow = 2) 
+#Recycling rule in R
+#Eleva por columna a la potencia del vector por entrada
 matriz^(1:1) #Arroja el valor de la matriz original
 matriz^(1:2) #eleva al cuadrado la segunda fila
-matriz^(1:3) #
-matriz^(1:4) #
-matriz^1:1
-matriz^1:2
-matriz^1:3
-matriz^1:4
+matriz^(1:3) #eleva e la matriz a la potencia indicada en el vector entrada por entrada, empezando por colomna hacia abajo
+matriz^(1:4) #la primera entrada la elava a la 1, la segunda al cuadrado, la tercera al cubo y la cuarta a la cuarta potencia
+matriz^1:1 #Muestra el el valor de la primera entrada de la matriz
+matriz^1:2 #Muestra las dos primeras entradas de la matriz
+matriz^1:3 #Muestra las tres entradas de la matriz
+matriz^1:4 # Muestra las cuatro entradas de la matriz
 
 #2
 ?system.time
