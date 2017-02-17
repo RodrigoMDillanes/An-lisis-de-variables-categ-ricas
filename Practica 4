@@ -1,0 +1,82 @@
+#https://archive.ics.uci.edu/ml/machine-learning-databases/pima-indians-diabetes/
+setwd("~/Documents/Análisis de variables categóricas")
+pima <- read.csv("prima.csv")
+head(pima)
+names(pima)
+names(pima) <- c("embarazos","glucosa","presion","triceps","insulina","IMC","funcdiab","Edad","diabetes")
+names(pima)
+X11()
+attach(pima)
+plot(triceps,glucosa)
+#1=Si diabetes , 0=No diabetes
+plot(triceps[diabetes==0],glucosa[diabetes==0],xlab = "Triceps",ylab = "Glucosa",main = "Tricps vs Glucosa")
+points(triceps[diabetes==1],glucosa[diabetes==1],xlab = "Triceps",ylab = "Glucosa", col=2,pch=2) #Grafica pares ordenados (x,y)
+legend(40,50,c("Saludable","Diabetes"),pch=1:2) 
+
+############# Practica 4 
+help("ChickWeight")
+chick <- data.frame(ChickWeight)
+#1.- Examinar el data frame "ChickWeight
+# a) Construir una gráfica de "weight" contra "time" para el pollo 34
+# b) Para los pollos de la dieta 4 desplegar un diagrama de caja para cada punto en el tiempo (weight)
+# c) Calcular la media del peso para los pollos de la dieta 4, para cada punto en el tiempo
+# d) Repetir el calculo anterior para los pollos de la dieta 2. Agregar la media del grupo 2 a una nueva grafica
+# e) Añadir el titulo y una leyende
+# f) Copiar las graficas y pegarlas en word
+
+#### a
+  plot(chick$weight[chick$Chick==34],chick$Time[chick$Chick==34],main = "Pollo 34",xlab = "Peso",ylab = "Tiempo",pch=3)
+  legend("bottomright",lty=1, c("Peso y tiempo"),bty = "n",cex = 1,pch = 3)
+  
+#### b
+Dieta4 <- subset(chick,chick$Diet==4)
+boxplot(Dieta4$weight ~ Dieta4$Time , col="grey",xlab="Tiempo",ylab="Peso",main="Dieta 4")
+legend("bottomright",lty=1, c("Peso a lo largo del tiempo"),bty = "n",cex = 1,pch = 3)
+
+#### c
+table(Dieta4$weight,Dieta4$Time)
+t0 <- mean(Dieta4$weight[Dieta4$Time==0])
+t2 <- mean(Dieta4$weight[Dieta4$Time==2])
+t4 <- mean(Dieta4$weight[Dieta4$Time==4])
+t6 <- mean(Dieta4$weight[Dieta4$Time==6])
+t8 <- mean(Dieta4$weight[Dieta4$Time==8])
+t10 <- mean(Dieta4$weight[Dieta4$Time==10])
+t12 <- mean(Dieta4$weight[Dieta4$Time==12])
+t14 <- mean(Dieta4$weight[Dieta4$Time==14])
+t16 <- mean(Dieta4$weight[Dieta4$Time==16])
+t18 <- mean(Dieta4$weight[Dieta4$Time==18])
+t20 <- mean(Dieta4$weight[Dieta4$Time==20])
+t21 <- mean(Dieta4$weight[Dieta4$Time==21])
+total <- t(data.frame(t0,t2,t4,t6,t8,t10,t12,t14,t16,t18,t20,t21))
+tiempo <- c(0,2,4,6,8,10,12,14,16,18,20,21)
+total <- data.frame(tiempo,total)
+
+plot(total$tiempo,total$total,xlab = "Tiempo",ylab = "Media de Peso",main = "
+     Media de peso
+     Dieta 4",pch=6)
+legend("bottomright",lty=1, c("media de peso"),bty = "n",cex = 1,pch = 6)
+
+
+##### d
+Dieta2 <- subset(chick,chick$Diet==4)
+t0 <- mean(Dieta2$weight[Dieta2$Time==0])
+t2 <- mean(Dieta2$weight[Dieta2$Time==2])
+t4 <- mean(Dieta2$weight[Dieta2$Time==4])
+t6 <- mean(Dieta2$weight[Dieta2$Time==6])
+t8 <- mean(Dieta2$weight[Dieta2$Time==8])
+t10 <- mean(Dieta2$weight[Dieta2$Time==10])
+t12 <- mean(Dieta2$weight[Dieta2$Time==12])
+t14 <- mean(Dieta2$weight[Dieta2$Time==14])
+t16 <- mean(Dieta2$weight[Dieta2$Time==16])
+t18 <- mean(Dieta2$weight[Dieta2$Time==18])
+t20 <- mean(Dieta2$weight[Dieta2$Time==20])
+t21 <- mean(Dieta2$weight[Dieta2$Time==21])
+total <- t(data.frame(t0,t2,t4,t6,t8,t10,t12,t14,t16,t18,t20,t21))
+tiempo <- c(0,2,4,6,8,10,12,14,16,18,20,21)
+total <- data.frame(tiempo,total)
+boxplot(Dieta2$weight~Dieta2$Time, col="grey",xlab="Tiempo",ylab="Peso",main="Dieta 2")
+legend("bottomright",lty=1, c("Peso a lo largo del tiempo"),bty = "n",cex = 1,pch = 3)
+
+plot(total$tiempo,total$total,pch=12,xlab = "Tiempo",ylab="Peso medio",main="Dieta 2",col=c("darkred"))
+legend("bottomright",lty=1, col=c("darkred"), c("Media de peso"),bty = "n",cex = 1,pch=12)
+
