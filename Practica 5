@@ -1,0 +1,88 @@
+#math.ku.dk/~helle/R-intro/datafiles.zip
+setwd("~/Documents/An??lisis de variables categ??ricas/datafiles")
+cherry <- read.csv("cherry.csv",dec = ".",sep = ";") #El dec es para los decimales
+# cherry <- read.csv(file.choose(),dec=".",sep = ";") el file.choose abre una ventana para elegir al archivo
+head(cherry)
+X11()
+plot(cherry)
+summary(cherry)
+cherry1 <- read.csv("cherry.csv",dec = ",",sep = ";") #El dec es para los decimales
+summary(cherry1) #Creamos un vector categorico
+cherry2 <- read.csv("/Users/rodrigomondragondillanes/Documents/An??lisis de variables categ??ricas/datafiles/cherry.csv",dec = ".",sep = ";") #El dec es para los decimales, la virgulilla es para seguir la ruta del directorio de trabajo
+tomatoes <- read.csv(file.choose(),dec = ".",sep = ";")
+summary(tomatoes)
+## Cargar el archivo cherry con extension xlsx
+require(xlsx)
+cherry3 <- read.xlsx("cherry.xlsx",sheetIndex = 1,)# el sheetIndex es para especificar el numero de la hoja
+summary(cherry3)
+cherry$Girth
+mean(cherry$Girth)
+X11()
+hist(cherry$Girth)
+
+with(cherry,mean(Height)) #Otra forma de mandar a llamar las variables dentro de una base
+##Subconjuntos de objetos
+cherry1 <- transform(cherry,logVolume=log(Volume),logGirth=log(Girth)) #Para hacer transformaciones 
+head(cherry1)
+summary(cherry1)
+
+subset(cherry,cherry$Height>70)
+subset(cherry,Height>80)
+subset(cherry,Height==80,select = c(Girth, Volume)) #Solo muestra las columnas en particular que queremos
+subset(cherry,Height>80 & Girth>15) #Conjuncion
+subset(cherry,Height>80 | Girth>15) #Disyuncion
+##Combinar dos bases
+newData <- data.frame(Girth=c(11.5,17.0),Height=c(71,75),Volume=c(22,40))
+allData <- rbind(cherry,newData)
+allData2 <- rbind(newData,cherry) #Pega observaciones row
+
+
+
+precipitacion <- rnorm(31,mean = 50,sd = 10)
+precipitacion
+allData2 <- cbind(cherry,precipitacion) #Pega variables column
+X11()
+plot(tomatoes)
+summary(tomatoes)
+
+#########Practica 5
+#1.- Crear un conjunto de datos llamado "tomatoes". Inspeccionar los datos con un "plot" y
+#    "summary" ??Que variables son cuantitativas/categoricas?
+#2.- Hacer un histograma de la variable "yield". Calcular media, mediana y desvest.
+#3.- Ejecutar los siguientes comandos y explicar el output
+#    table(variety) ; table(density) ; table(variety,density)
+#4.- Hacer otro data frame que solo contenga las lineas correspondientes a la variedad "ife"
+#5.- Hacer un data frame que contenga las lineas de la variedad "Pusa" con densidad menor a 25000
+#    ??Cual es la media de los valores "yield" correspondientes?
+#6.- Hacer un data frame sin las observaciones 5 y 24. (con base en el punto 1)
+#    Hacer el histograma correspondiente
+
+#1.- 
+X11()
+plot(tomatoes)
+summary(tomatoes)
+# la variable variety y density es de tipo categorica 
+
+#2.- 
+hist(tomatoes$yield)
+mean(tomatoes$yield) #La media es de 13.9111
+median(tomatoes$yield) #La mediana es 13.5
+sd(tomatoes$yield) #La desviacion estandar es de 3.65496
+
+#3.- 
+table(tomatoes$variety) #Muestra la frecuencia de la variedad de tomates
+table(tomatoes$density) #Muestra el numero de tomates que tienen densidad de 10000,20000,30000,40000
+table(tomatoes$variety,tomatoes$density) #Realiza un tabulado de las dos variables 
+
+#4.- 
+IFE <- subset(tomatoes,tomatoes$variety=="Ife")
+
+#5.-
+
+Pusa <- subset(tomatoes,tomatoes$variety=="Pusa" & tomatoes$density<25000)
+mean(Pusa$yield) #La media es de 17.2
+
+#6.-
+base5<-tomatoes[-c(5,24),]
+hist(base5$yield)
+plot(base5)
