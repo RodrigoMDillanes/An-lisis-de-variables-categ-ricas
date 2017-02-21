@@ -1,0 +1,90 @@
+X11()
+plot(cherry)
+attach(cherry)
+X11()
+par(mfrow=c(3,1))
+plot(Girth,Volume)
+plot(log(Girth),log(Volume))
+plot(Height)
+X11()
+hist(Volume)
+x11();boxplot(Volume)
+temp <- c(65.5, 83.9, 84, 76.9) #Temperatura en NY ºF
+x11(); barplot(temp, names=5:8)
+setwd("/Users/rodrigomondragondillanes/Documents/Análisis de variables categóricas/datafiles")
+NYtemp <- read.csv("ny-temp.csv",dec = ".",sep = ";")
+julio <- subset(NYtemp,NYtemp$Month==7)
+agosto <- subset(NYtemp,NYtemp$Month==8)
+attach(julio)
+x11();plot(Day,Temp,type = "l",main = "Julio",lty=2) #Linea punteada
+x11();plot(Day,Temp,type = "l",main = "Julio",lwd=2) #Grueso de la linea
+x11();plot(Day,Temp,type = "l",main = "Julio",lwd=2,col=3) # col="green"
+x11();plot(Day,Temp,type = "l",main = "Temperatura en Nueva York
+           Julio",lwd=2,col=3,xlab = "Dia del mes",ylab = "Tempretatura (ºF)")
+x11();plot(Day,Temp,type = "l",cex.lab=1.3,main = "Julio",lwd=2,col=3) #cex.lab es para el tamaño de letra de la etiqueta de los ejes
+x11();plot(Day,Temp,type = "l",cex.axis=10,main = "Julio",lwd=7,col=3) #cex.axis es para ele tamaño de letra de la etiqueta de los ejes
+#xlim=c(0,40) y ylim limitan los ejes
+detach(julio)
+range(julio$Temp) # Nos muestra el minimo y el maximo
+range(agosto$Temp)
+x11();plot(julio$Day,julio$Temp,type = "l",ylim = c(70,100))
+points(agosto$Day,agosto$Temp,col="red") #Añade puntos en el grafico anterior
+
+x11();plot(julio$Day,julio$Temp,type = "l",ylim = c(70,120),col="slateblue4")
+lines(agosto$Day,agosto$Temp,col="sienna4")
+legend(5,120,c("Julio","Agosto"),text.col = c("slateblue4","sienna4"))
+x11();plot(julio$Day,julio$Temp,type = "l",ylim = c(70,100)) 
+abline(h=73,col="seagreen4")# h es horizontal
+abline(v=14,col="red4")# v es vertical
+abline(84.652,-.0468)
+
+require(MASS)
+help(cats)
+View(cats)
+data(cats) #Simplemente carga el conjunto de datos
+?data
+pairs(cats)
+x11();plot(cats$Bwt,cats$Hwt,col=cats$Sex) #Hace diferencia de colores entre sexo
+x11()
+par(mfrow=c(2,1))
+hist(cats$Hwt[cats$Sex=="M"],main = "Peso del corazon gatos machos ",probability = T) #Toma las probabilidades
+hist(cats$Hwt[cats$Sex=="M"],main = "Peso del corazon gatos machos ",breaks = c(5,10,15,20,25)) #Junta frecuencias
+
+x11();par(mfrow=c(3,1)); boxplot(cats$Hwt[cats$Sex=="F"]);boxplot(cats$Hwt[cats$Sex=="M"]);boxplot(cats$Hwt~cats$Sex)
+
+#### EXPORTAR GRAFICAS A PDF
+#METODO 1
+x11(); plot(julio$Day,julio$Temp)
+dev.print(file="Grafico temperatura1.pdf",device = pdf) #EXPORTAR EN PDF
+getwd() #Ruta donde lo guardó, podemo especificar el directorio de trabajo o poner la ruta completa
+#METODO 2
+pdf("gragica2.pdf") #Marca error al abrir el archivo
+plot(julio$Day,julio$Temp,col="blue")
+dev.off()
+#### PARA EJECUTAR TODO LO DE UN SCRIPT ES
+#sourse()
+
+######### FUNCIONES
+
+#Creamos una funcion para clacular el valor de una ecuacion de segundo grado
+f <- function(x) return (2*x^2-0.9*x-1) #No es necesaria la llave porque es una funcion sencilla
+f(3)
+f(0)
+x11();plot(f,from = -1,to=2) #Graficamos la funcion, otra forma de poner limites en el eje de las x
+
+g <- function(x) return(-4*x^2+.2*x+4)
+plot(g,from = -1,to=2,add=T,col="red")
+
+optimize(f,interval = c(-1,2)) #Encuentra maximos y minimos en un intervalo!!
+uniroot(f,interval = c(-1,2)) #Encuentra las raices de un polinomio, usa el método del punto medio
+uniroot(f,interval = c(-2,0))
+
+##Ecuacion de dos variables
+h <- function(x1,x2) return(-5-3*x2+4*x1+x1^2-x1*x2+x2^2)
+h(0,0)
+x1 <- seq(0,2,length=51)
+x2 <- seq(-3,1,length=51)
+x11(); fVals <- outer(x1,x2,h) #La funcion outer evalua la funcion en sus dos entradas
+fVals
+dim(fVals)
+x11();contour(x1,x2,fVals) #Hace una grafica de "contornos"
