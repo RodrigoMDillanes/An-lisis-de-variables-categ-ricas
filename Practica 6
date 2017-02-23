@@ -1,0 +1,92 @@
+help("InsectSprays")
+View(InsectSprays)
+data("InsectSprays")
+aov.spray <- aov(sqrt(count)~spray,data = InsectSprays)# var_dep ~ var_ind
+aov.spray2 <- aov(sqrt(InsectSprays$count)~InsectSprays$spray)
+aov.spray3 <- aov(sqrt(InsectSprays[,1])~InsectSprays[,2])
+c(aov.spray,aov.spray2,aov.spray3)
+aov.spray
+aov.spray2
+aov.spray3
+#Todas las expresiones anteriores son equivalentes
+
+summary(aov.spray)
+
+x <- c(3,4,5,6,7)
+y <- numeric(length(x))
+for(i in 1:length(x)) if(x[i]==5) y[i] <- 0 else y[i] <- 1
+y
+
+for(i in 1:length(x)){
+  y[i] <- 0
+  ...
+}
+
+z <- numeric(length(x))
+for(i in 1:length(x)) z[i] <- x[i]+y[i]
+z
+
+#source("ruta/nombre")#Cargar un archivo .R
+
+x <- rnorm(10)
+
+mux <- mean(x)
+cat("La media de x es: ",mux,"\n") #Concatenar
+cat("El summary de x es \n ",summary(x),"\n")
+print(summary(x))
+summary(x)
+# Guardar primero el archivo y ejecutar sourse("nombre")
+#sourse("nombre.R",echo=T) #Muestra el procedimiento linea por linea
+#sourse("nombre.R",verbose=T) # Corre el script por pasos
+x <- 1.0
+if(x<0.2){
+  x <- x+1
+  cat("Se aumenta dicho valor \n")
+}else if(x<2.0){
+  x <- 2.0*x
+  cat("Se aumenta mas dicho valor \n")
+}else
+{
+  x <- x-1
+  cat("Se reduce dicho valor \n")
+}
+for(lupe in seq(0,1,by = .3)){
+  cat(lupe,"\n")
+}
+
+x <- c(1,2,4,8,16)
+for(loop in x){
+  cat("El valor de loop es: ",loop,"\n")
+}
+
+x <- rnorm(5)
+for(lupe in x){
+  if(lupe>2)
+    next
+  if(lupe<.6 && lupe>.5)
+    break()
+  cat("El valor de lupe es: ",lupe,"\n")
+}
+
+?runif
+
+#Ordenar un vector de numeros aleatorios de ~U(a,b)
+
+nuevaf <- function(a,b){
+  x <- runif(10,a,b)
+  mean(x)
+}
+nuevaf(-1,1)
+nuevaf(10,1)
+
+#### Practica 6
+#Modificar el codigo anterior para que tome el max y el min sin importar el orden
+
+nuevaf <- function(a,b){
+  if(a>b){
+    a <- b
+    b <- a
+  }
+  x <- runif(10,a,b)
+  mean(x)
+}
