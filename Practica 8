@@ -1,0 +1,152 @@
+### distribuci??n binomial 
+#
+# Supongamos que se tiene un examen de opci??n m??ltiple de 10 preguntas. Un estudiante que no 
+# estudi?? decide responder completamente al azar. La probabilidad de escoger la respuesta 
+# correcta en cada pregunta es 0.20
+
+# La probabilidad de que saque 0 respuestas correctas
+dbinom(0,10,0.2)
+
+#La probabilidad de tener 1 respuesta correcta
+dbinom(1,10,0.2)
+
+y <- 0:15
+p1 <- dbinom(y,10,0.2)
+p2 <- dbinom(y,10,0.5)
+p3 <- dbinom(y,10,0.8)
+dstrbinom <- data.frame(y,p1,p2,p3)
+x11();par(mfrow=c(3,1))
+plot(y,p1);plot(y,p2);plot(y,p3)
+
+### funci??n de verosimilitud
+#
+#
+x11();curve(dbinom(1,10,x),xlim=c(0,1),xlab=expression("Par??metro binomial" ~pi),
+            ylab=expression("Verosimilitud l("~pi~")" ))
+x11();curve(dbinom(1,10,x),xlim=c(0,1),xlab=expression("Par??metro binomial" ~pi),
+            ylab=expression("Verosimilitud l("~pi~")" ))
+segments(1/10,0,1/10,1,lty=3)
+x11();curve(dbinom(0,10,x),xlim=c(0,1),xlab=expression("Par??metro binomial" ~pi),
+            ylab=expression("Verosimilitud l("~pi~")" ))
+segments(0,0,0,1,lty=3)
+x11();curve(dbinom(7,10,x),xlim=c(0,1),xlab=expression("Par??metro binomial" ~pi),
+            ylab=expression("Verosimilitud l("~pi~")" ))
+segments(7/10,0,7/10,1,lty=3)
+x11();curve(dbinom(10,10,x),xlim=c(0,1),xlab=expression("Par??metro binomial" ~pi),
+            ylab=expression("Verosimilitud l("~pi~")" ))
+segments(1,0,1,1,lty=3)
+
+### Pruebas de significancia para un par\'ametro binomial
+#
+# Ejercicio: Calc??lese el margen de error y el intervalo para la proporci\'on de mujeres
+# en el dataframe "survey" de la paqueter??a "MASS".
+# 
+# Primero cargamos librer??a y datos
+library(MASS)
+# help(survey)
+survey1 <- survey
+View(survey1)
+#
+# Para calcular la proporci'on de mujeres, primero quitamos los valores NA de la tabla
+resp.gen <- na.omit(survey1$Sex)
+n <- length(resp.gen) # Obteniendo respuestas v??lidas
+# Del objeto "resp.gen" contamos cu??ntas son mujeres:
+k <- sum(resp.gen=="Female")
+pbarra <- k/n; pbarra
+# Por lo tanto la proporci??n de mujeres es 1/2
+# Calculamos ahora el estimado del error est??ndar
+SE <- sqrt(pbarra*(1-pbarra)/n); SE 
+# Obtenemos z alfa/2 :
+alpha <- 0.05
+z.alphamedios <- qnorm(1-alpha/2)
+z.alphamedios
+# Margen de error:
+E <- z.alphamedios*SE ; E
+# As??, el intervalo de confianza es 
+pbarra + c(-E,E)
+# Con un nivel de confianza del 95%, entre 43.62% y 56.37% de los alumnos de la universidad, 
+# y el margen de error es del 6.37%
+
+# Soluci??n alterna:
+prop.test(k,n)
+
+### Pr??ctica 8
+##
+# 1. Descargue el archivo http://www.wingia.com/web/files/news/14/file/14.pdf
+# 2. En el primer p??rrafo se reportan varios descubrimientos clave. ??Dichos porcentajes
+#    son estad??sticos muestrales o par??metros de poblaci??n?
+# 3. El t??tulo del reporte es "Global Index of Religiosity and Atheism". Para generalizar 
+#    los descubrimientos del reporte a la poblaci??n global, ??qu?? se debe suponer acerca del 
+#    m??todo de muestreo?, ??parece eso una suposici??n razonable?
+# 4. Ponga atenci??n a la tabla 6 (p??ginas 15 y 16), la cual reporta el tama??o de muestra y
+#    porcentajes para los 57 pa??ses. Ejercicio se basar?? en el conjunto original de respuestas 
+#    individuales. para cargar los datos, ejecute:
+download.file("http://www.openintro.org/stat/data/atheism.RData", destfile ="atheism.RData")
+load("atheism.RData")
+# 5. ??A qu?? corresponde cada fila de la tabla 6?, ??a qu?? corresponde cada fila del dataframe 
+#    "atheism"? 
+#    Vea la fila correspondiente a Estados Unidos en la tabla 6, el porcentaje de ateos es 
+#    de 5%
+# 6. Haga un nuevo dataframe llamado "usd12" que contenga solamente las filas en el objeto 
+#    "atheism" asociadas a los encuestados en el 2012 (para Estados Unidos). Luego calcule 
+#    la proporci??n de aquellos ateos. ??Coincide con el porcentaje de la tabla 6?, En caso de 
+#    que no, ??por qu???
+# 7. Calcule el margen de error y de un intervalo de confianza del 95% para la proporci??n 
+#    de ateos en los Estados Unidos en el a??o 2012.
+# 8. Repita los ejercicios 5, 6 y 7, pero ahora con un pa??s de su elecci??n.
+
+
+
+#2
+#Son estadísticos muestrales
+
+#3
+
+#5
+#En la tabla 6 a primera columna muestra el paias, la segunda el tamaño de muestra o numero de personas que fueron
+#encuestadas de casa país, la tercer columna muestra el portentaje de personas que se considerean religiosas,
+#la cuarta muestra el porcentaje de personas que no se consideran religiosas, la quienta columna muestra
+#El porcentaje de personas que se declaran como ateos y la ultima columna muestra el porcentaje de personas
+#que no respondieron la pregunta.
+
+#En el data frame "atheism" al primera columna muestra el nombre del país de la persona que fue encuestada,
+#la segunda si se considera ateo o no, y la tercer columa indica el año en que fue encuestada la persona
+
+#6
+usd12 <- subset(atheism,atheism$nationality=="United States" & atheism$year==2012)
+a <- table(usd12$year,usd12$response)
+porcentaje <- round(a/margin.table(a)*100,1)
+porcentaje
+#El porcentaje si coincide con los mostrados en la tabla 6
+
+#7
+k <- sum(usd12$response=="atheist")
+n <- length(usd12$response)
+pbarra <- k/n
+SE <- sqrt(pbarra*(1-pbarra)/n); SE 
+alpha <- 0.05
+z.alphamedios <- qnorm(1-alpha/2)
+z.alphamedios
+# Margen de error:
+E <- z.alphamedios*SE ; E
+#Intervalo de confianza
+prop.test(k,n)
+
+#8
+#Pais de eleccion: Pakistan
+pakistan <- subset(atheism,atheism$nationality=="Pakistan" & atheism$year==2012)
+a <- table(pakistan$year,pakistan$response)
+a
+pocentaje <- round(a/margin.table(a)*100,1)
+pocentaje
+
+k <- sum(pakistan$response=="atheist")
+n <- length(pakistan$response)
+pbarra <- k/n
+pbarra
+SE <- sqrt(pbarra*(1-pbarra)/n);SE
+alpha <- .05
+z.alphamedios <- qnorm(1-alpha/2)
+z.alphamedios
+E <- z.alphamedios*SE;E
+prop.test(k,n)
