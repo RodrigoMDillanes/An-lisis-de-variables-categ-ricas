@@ -1,0 +1,40 @@
+# Ejemplos GLM's
+ronquido <- matrix(c(24,1355,35,603,21,192,30,224),ncol=2, byrow=T)
+dimnames(ronquido) <- list(ronca=c("nunca","a veces","frecuentemente","siempre"), enfCorazon=c("Si","No"))
+ronquido
+punt.a <- c(0,2,4,5) #Asigando puntos arbitraria
+(prop.si <-prop.table(ronquido,1))
+help(glm)
+ronca.a <- glm( ronquido  ~  punt.a, family=binomial(link="identity") ) #binomial porque son datos binarios, link es la funcion identidad
+names(ronca.a)
+summary(ronca.a)$coefficients
+coef(ronca.a)
+predict(ronca.a,type="response") #Van aumentando, por que lo que podría haber asociacion entre roncar y
+#y tener problemas cardiacos
+# ??qu?? pasa cuando se cambian las puntuaciones (0,2,4,4.5), (0,1,2,3)?
+#Cambiando puntuacion 1
+punt.b <- c(0,2,4,4.5) #Asigando puntos arbitraria
+(prop.si <-prop.table(ronquido,1))
+help(glm)
+ronca.b <- glm( ronquido  ~  punt.b, family=binomial(link="identity") )
+names(ronca.b)
+summary(ronca.b)$coefficients
+coef(ronca.b)
+predict(ronca.b,type="response") 
+#Cambiando puntuacion 2
+punt.c <- c(0,1,2,3) #Asigando puntos arbitraria
+(prop.si <-prop.table(ronquido,1))
+help(glm)
+ronca.c <- glm( ronquido  ~  punt.c, family=binomial(link="identity") )
+names(ronca.c)
+summary(ronca.c)$coefficients
+coef(ronca.c)
+predict(ronca.c,type="response") 
+
+
+ronca.logit <- glm(ronquido ~ punt.a, family=binomial(link="logit"))
+summary(ronca.logit)
+predict(ronca.logit,type = "response")
+ronca.probit <- glm(ronquido ~ punt.a, family=binomial(link="probit"))
+summary(ronca.probit) 
+predict(ronca.probit,type = "response")
