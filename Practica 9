@@ -1,0 +1,101 @@
+# Pr??ctica 9
+#
+# ---------------------------------------------
+# Funciones en R para pruebas binomiales simples e intervalos de confianza (CI)
+#
+# La funci??n "prop.test" calcula la prueba de score y el CI.
+# Por defecto la hip??tesis nula es pi=0.5 contra pi!=0.5, tambi??n utiliza correcci??n de continuidad.
+prop.test(0,20)
+# Ahora sin correcci??n de continuidad
+prop.test(0,20,correct = F)
+
+# La funci??n "binom.test" hace pruebas e intervalos exactos.
+# Por defecto la hip??tesis nula es pi=0.5 contra pi!=0.5, tambi??n utiliza correcci??n de continuidad.
+binom.test(0,20)
+
+# Tablas de contingencia
+# Para el ejemplo de la presentaci??n:
+datos<-edit(data.frame()) 
+
+# Otro ejemplo:
+#
+tam.semilla <- c("pequenia", "mediana", "grande")
+forma.crec <- c("Arbol", "Arbusto", "Hierba")
+rasgo.especie <- data.frame(
+  tam.semilla = tam.semilla[c(1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3)],
+  forma.crec = forma.crec[c(3, 3, 2, 2, 1, 2, 2, 3, 1, 1, 1, 1)]
+)
+
+tbl <- table(rasgo.especie)
+tbl
+as.data.frame(tbl)
+as.data.frame.matrix(tbl) #Tabla de contingencia 
+
+# Pr??ctica 9
+#    Existen funciones en librer??as que calculan de manera f??cil lo que pide esta pr??ctica. Sin 
+#    embargo, la idea aqu?? es aplicar aquello que se revis?? en la primera parte del curso 
+#    (programaci??n en R). 
+#    
+# 1. Sean X,Y dos variables categ??ricas con I , J categor??as respectivamente. 
+#    En R, si "data" es un dataframe de IxJ, escriba una funci??n "distribucion.conjunta" que dependa de 
+#    "data" y que calcule la proporci??n conjunta de X,Y. 
+#    
+# 2. En las mismas condiciones del ejercicio 1, escriba una funci??n que calcule las distribuciones 
+#    marginales y otra que calcule la distribuci??n condicional de Y dado X.
+#
+# 3. Una aplicaci??n de la estad??stica en la medicina se puede ver en el c??lculo de la sensibilidad y 
+#    la especificidad para una prueba cl??nica. 
+#    Podemos definir la sensibilidad como la proporci??n de enfermos correctamente identificados y la 
+#    especificidad como la proporci??n de sanos correctamente identificados. 
+#    Escriba una funci??n que calcule la sensibilidad y especificidad para una tabla de contingencia 
+#    de 2x2.
+#    Compare sus resultados con las funciones "sens" y "spec" de la librer??a "ROCR".
+
+#1
+tam.semilla <- c("pequenia", "mediana", "grande","large")
+forma.crec <- c("Arbol", "Arbusto", "Hierba","Rama")
+rasgo.especie <- data.frame(
+  tam.semilla = tam.semilla[c(1, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3,4,4,4,4)],
+  forma.crec = forma.crec[c(3, 3, 2, 2, 1, 2, 2, 3, 1, 1, 1, 1,4,4,4,4)]
+)
+
+conjunta <- function(datos){ #El argumento de la funcion debe ser un data frame como el codigo anterior
+  a <- table(datos)
+  as.data.frame.matrix(a)
+  dimen <- dim(a)
+  filas <- dimen[1]
+  colum <- dimen[2]
+  x <- rep(0,filas)
+  for(i in 1:filas) x[i] <- sum(a[i,])
+  total <- sum(x)
+  conjun <- a/total
+  return(conjun)
+}
+conjunta(rasgo.especie)
+#2
+marginal <- function(datos){ #El argumento debe ser un data frame y se debe correr la funcion del inciso anterior
+  conjun<-conjunta(datos)
+  dimen <- dim(conjun)
+  fil<-dimen[1]
+  col <- dimen[2]
+  xfil <- rep(0,fil)
+  ycol<-rep(0,col)
+  for(i in 1:fil) xfil[i]<-sum(conjun[i,])
+  for(i in 1:col) ycol[i] <- sum(conjun[,i])
+  d <- list("Marginal fila"=xfil,"Maginal columna"=ycol)
+  return(d)
+}
+marginal(rasgo.especie)
+
+condicional <- function(datos){
+  a<-table(datos)
+  as.data.frame.matrix(a)
+  dimen <- dim(a)
+  filas <- dimen[1]
+  col <- dimen[2]
+  x <- rep(0,filas)
+  for(i in 1:filas) x[i]<-sum(a[i,])
+  b <- a/x
+  return(b)
+}
+condicional(rasgo.especie)
