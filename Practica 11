@@ -1,0 +1,211 @@
+# Ejemplo para diferencia de proporciones
+#
+# Supongamos que para el ejemplo del uso de aspirina y placebo se hace un nuevo estudio y se 
+# obtienen los siguientes datos:
+Aspinf <- matrix(c(189,10845,104,10933),nrow=2,byrow=T)
+dimnames(Aspinf)<- list(c("Placebo","Aspirina"),c("Si","No"))
+names(dimnames(Aspinf))<-c("Grupo","Infarto")
+Aspinf
+totGrupo <-apply(Aspinf,1,sum)
+n1<-totGrupo[1] ; n2 <-totGrupo[2];n1;n2
+# De las 11034 personas que tomaron placebo, 189 tuvieron un infarto. Entonces la proporci??n 
+# para este grupo es
+(p1 <- Aspinf[1,1]/totGrupo[1])
+# De las 11037 personas que tomaron aspirina, 104 tuvieron infarto. As??, la proporci??n es:
+(p2 <- Aspinf[2,1]/totGrupo[2])
+# Por lo tanto, la diferencia muestral de proporciones es
+difmprop <- p1-p2 ; names(difmprop)<- NULL
+difmprop
+# Calculando el estimado del error est??ndar
+SE <- sqrt((p1*(1-p1))/Aspinf[1,1]+(p2*(1-p2))/Aspinf[2,1]) ; names(SE)<-NULL
+SE
+# Obtenemos z alfa/2 :
+alpha <- 0.05
+(z.alphamedios <- qnorm(1-alpha/2))
+(E <- z.alphamedios*SE)
+# As??, el intervalo de confianza es 
+difmprop + c(-E,E)
+# Observemos que "la mayor parte" de los valores de este intervalo son positivos. Esto 
+# podr??a sugerir que la diferencia real de proporciones es positiva, es decir, para las 
+# personas que tomaron aspirina, parece haber un menor riesgo de infarto.
+
+# Riesgo relativo: Es una porporcion de probabilidades
+#
+# Obtenemos el riesgo relativo para el mismo ejemplo
+(RR <- p1/p2)
+# Esto indica que la proporci??n de casos de infarto es 81.78% mayor para el grupo que tom?? 
+# placebo
+(E <- z.alphamedios*(sqrt((1-p1)/(n1*p1)+(1-p2)/(n2*p2))))
+intconf<- log(p1/p2)+c(-E,E); names(intconf)<-NULL
+intconf
+# Aplicando la funci??n exponencial obtenemos un intervalo de confianza para RR
+exp(intconf)
+# Con una confianza del 95%, podemos asegurar que la proporci??n de casos de infarto para 
+# aquellos que tomaron placebo es entre 1.43 y 2.3 mayor que la proporci??n de aquellos que 
+# tomaron aspirina. Esto indica que el riesgo de infarto es al menos 43% superior para los 
+# del grupo placebo.
+
+# Ejemplo raz??n de momios , un exito es x veces mas probables que un fracaso
+# 
+# Para las personas que tomaron placebo, los momios son
+Omega1<- Aspinf[1,1]/Aspinf[1,2]; names(Omega1)<-NULL ; Omega1
+# Es decir, hubieron 1.74 casos de infarto por cada 100 casos sin infarto.
+# Para aquellos que tomaron aspirina:
+Omega2<- Aspinf[2,1]/Aspinf[2,2]; names(Omega2)<-NULL ; Omega2
+# Entonces hubieron 0.95 infartos por cada 100 casos sin infarto.
+
+# Calculamos la raz??n de momios muestral:
+(RMm <- Omega1/Omega2)
+# S??lo para verificar:
+(rz.prodcruzado <- (Aspinf[1,1]*Aspinf[2,2])/(Aspinf[1,2]*Aspinf[2,1])) 
+# Entonces los momios fueron 83% m??s grandes para aquellos que tomaron placebo.
+# Inferencia Raz??n de momios
+# 
+
+
+(logthetam <- log(RMm))
+SE<- sqrt((1/Aspinf[1,1])+(1/Aspinf[1,2])+(1/Aspinf[2,1])+(1/Aspinf[2,2]))
+E <- z.alphamedios*SE
+# Intervalo de confianza
+(logthetam + c(-E,E)) #Logaritmo de la razon de momios
+(exp(logthetam + c(-E,E))) #Intervalo de los momios en si
+# Ya que 1 no pertenece a este conjunto, los momios parecen ser diferentes en ambos grupos.
+
+install.packages("vcdExtra")
+library(vcdExtra)
+(satis <- as.matrix(JobSat))
+
+# Prueba de independencia
+# Supongamos que se tiene la siguiente tabla de contingencia
+satistrab <- matrix(c(2,4,13,3,2,6,22,4,0,1,15,8,0,3,13,8),nrow=4,byrow=T)
+dimnames(satistrab)<- list(c("<5k","5k-15k","15k-25k",">25k"),c("insat","poca","moderada","mucha"))
+names(dimnames(satistrab))<- c("Ingreso","Satisfaccion Laboral")
+satistrab
+# Calculamos totales de fila y columna
+(Tfila <- apply(satistrab,1,sum))
+(Tcol <- apply(satistrab,2,sum))
+# Estimados de las frecuencias esperadas
+(estFE<-Tfila %*% t(Tcol)/sum(satistrab))
+(xcuad <- sum((satistrab-estFE)^2/estFE))
+# Calculando grados de libertad
+(gl <- (dim(satistrab)[1]-1)*(dim(satistrab)[2]-1))
+(p <- pchisq(xcuad,gl,lower.tail=FALSE)) #El lower.tail F es para que tome X>x
+# Seg??n los resultados, la evidencia contra H0 es d??bil; es plausible que la satisfacci??n 
+# laboral y el igreso sean independientes.
+
+# Diferencia en la filiaci??n pol??tica por g??nero
+polgen <- matrix(c(762,327,468,484,239,477),nrow=2,byrow=T)
+dimnames(polgen) <- list(c("Mujeres","Hombres"),c("Democratas","Independientes","Republicanos"))
+names(dimnames(polgen))<-c("Genero","Filiacion Politica")
+polgen
+(Tfila <- apply(polgen,1,sum))
+(Tcol <- apply(polgen,2,sum))
+(estFE<-Tfila %*% t(Tcol)/sum(polgen))
+(xcuad <- sum((polgen-estFE)^2/estFE))
+(gl <- (dim(polgen)[1]-1)*(dim(polgen)[2]-1))
+(p <- pchisq(xcuad,gl,lower.tail=FALSE)) #Estadistico x cuadrada
+G2 <- 2*sum((polgen*log(polgen/estFE)))
+(p <- pchisq(G2,gl,lower.tail=FALSE))
+# Seg??n el valor de los estad??sticos y sus valores p, hay evidencia de asociaci??n.
+
+# Otra manera de hacer los c??lculos, utilizando el comando as.table()
+pag.tab <- matrix(c(762, 484, 327, 239, 468, 477), nrow=2)
+dimnames(pag.tab) <-list(Genero=c("Mujer","Hombre"),filp=c("Dem??crata","Independiente","Republicano"))
+pag.tab <- as.table(pag.tab)
+pag.tab
+# La ventaja de usar as.table() es que le permite a R saber que la matriz representa una 
+# tabla de contingencia de conteos
+# Como ya hab??amos visto, esto se puede convertir en un data.frame
+pag.df <-   expand.grid(Genero=c("Mujer","Hombre"),Filiac=c("Dem??crata","Independiente","Republicano"))
+pag.df #El comando anterior lo expande como un data.frame
+pag.df$Freq <- c(762,484,327,239,468,477)
+xtabs(Freq ~ Genero + Filiac,data=pag.df)
+names(pag.df)
+
+# C??lculos en una tabla
+# Totales en fila y columna
+margin.table(pag.tab, 1)
+margin.table(pag.tab, 2)
+addmargins(pag.tab) #Agregamos la fila de totales y columna y fila
+# Distribuciones condicionales
+prop.table(pag.tab, 1)
+prop.table(pag.tab, 2)
+# Prueba de independencia
+chisq.test(pag.tab)
+pag.chisq <- chisq.test(pag.tab)
+names(pag.chisq)
+pag.chisq$statistic
+pag.chisq$parameter #Grados de libertad
+pag.chisq$p.value
+pag.chisq$observed
+pag.chisq$expected
+with(pag.chisq, sum((observed - expected)^2/expected)) #Verificando el valor de ji-cuadrada
+pag.chisq$residuals #Son residuos no estandarizados
+# Para convertir estos residuos en estandarizados:
+(n <- sum(pag.tab))
+n.genero <- margin.table(pag.tab, 1)
+n.filp <- margin.table(pag.tab, 2)
+(n.genero %o% n.filp)/n
+pag.chisq$residual/sqrt((1-n.genero/n) %o% (1-n.filp/n)) #En valor absolutos varios exceden el 2
+
+# Practica 11
+# 1. Para el ejemplo de la filiacion politica y genero haga el calculo de los residuos
+# e interprete.
+
+n <- sum(pag.tab)
+(n.genero <- margin.table(pag.tab, 1))
+(n.filp <- margin.table(pag.tab, 2))
+((n.genero %o% n.filp)/n)
+pag.chisq <- chisq.test(pag.tab)
+pag.chisq$residuals
+pag.chisq$residual/sqrt((1-n.genero/n) %o% (1-n.filp/n))
+#hubo menos hombres democratas y menos mujeres republicanas  que lo que predice la hipotesis nula
+# de igual forma exiten mas mujeres democratas y hombres republicanos que el calculo
+#de la hipotesis nula, por lo que es necesario ajustar las celdas anteriormente mencionadas.
+# 
+# 2. Haga una funcion que para una matriz (representando una tabla de dos vias) el output 
+# sea una lista que contenga los valores de X^2,G^2,gl, matriz de residuos estandarizados.
+data<-edit(data.frame()) 
+vias<-function(data)
+{
+  fila <- apply(data,1,sum)
+  col <- apply(data,2,sum)
+  tot<-fila %*% t(col)/sum(data)
+  x2 <- sum((data-tot)^2/tot)
+  cat("X^2: ",x2,"\n")
+  G2 <- 2*sum((data*log(data/tot)))
+  cat("G^2: ",G2,"\n")
+  gl <- (dim(data)[1]-1)*(dim(data)[2]-1)
+  cat("gl: ",gl,"\n")
+  data<-data.matrix(data)
+  res.tab <- as.table(data)
+  res.tab
+  n <- sum(res.tab)
+  n.fil <- margin.table(res.tab, 1)
+  n.col <- margin.table(res.tab, 2)
+  (n.fil %o% n.col)/n
+  pag.chisq <- chisq.test(res.tab)
+  pag.chisq$residuals
+  residuose<-pag.chisq$residual/sqrt((1-n.fil/n) %o% (1-n.col/n))
+  cat("Residuos estandarizados: ","\n");residuose
+} 
+
+# 3. Suponga que se tiene la siguiente tabla que fue obtenida de una encuesta que trata de 
+# ver si hay relacion entre la felicidad percibida y el ingreso familiar.
+#                     Felicidad
+# Ingreso     no muy feliz     feliz    muy feliz
+# Superior
+# al promedio       21          159        110
+# 
+# Promedio          53          372        221
+# 
+# debajo del
+# promedio          94          249         83
+# 
+# a) Obtener los valores de X^2, G^2 (y sus respectivos valores p) y la matriz de residuos 
+# estandarizados e interpretar ??Existe asociaci??n entre el ingreso familiar y la felicidad?
+felicidad<-matrix(c(21,53,94,159,372,249,110,221,83),ncol=3)
+dimnames(felicidad)<-list(c("Al promedio","Promedio","Debajo del promedio"),c("No muy feliz","Feliz","Muy feliz"))
+felicidad<-data.frame(felicidad)
+vias(felicidad)
+#existe una relacion directa entre la felicidad y el ingreso
