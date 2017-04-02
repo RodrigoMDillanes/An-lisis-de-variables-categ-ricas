@@ -1,0 +1,141 @@
+# Ejemplo para diferencia de proporciones
+#
+# Supongamos que para el ejemplo del uso de aspirina y placebo se hace un nuevo estudio y se 
+# obtienen los siguientes datos:
+Aspinf <- matrix(c(189,10845,104,10933),nrow=2,byrow=T)
+dimnames(Aspinf)<- list(c("Placebo","Aspirina"),c("Si","No"))
+names(dimnames(Aspinf))<-c("Grupo","Infarto")
+Aspinf
+totGrupo <-apply(Aspinf,1,sum)
+n1<-totGrupo[1] ; n2 <-totGrupo[2];n1;n2
+# De las 11034 personas que tomaron placebo, 189 tuvieron un infarto. Entonces la proporci??n 
+# para este grupo es
+(p1 <- Aspinf[1,1]/totGrupo[1])
+# De las 11037 personas que tomaron aspirina, 104 tuvieron infarto. As??, la proporci??n es:
+(p2 <- Aspinf[2,1]/totGrupo[2])
+# Por lo tanto, la diferencia muestral de proporciones es
+difmprop <- p1-p2 ; names(difmprop)<- NULL
+difmprop
+# Calculando el estimado del error est??ndar
+SE <- sqrt((p1*(1-p1))/Aspinf[1,1]+(p2*(1-p2))/Aspinf[2,1]) ; names(SE)<-NULL
+SE
+# Obtenemos z alfa/2 :
+alpha <- 0.05
+(z.alphamedios <- qnorm(1-alpha/2))
+(E <- z.alphamedios*SE)
+# As??, el intervalo de confianza es 
+difmprop + c(-E,E)
+# Observemos que "la mayor parte" de los valores de este intervalo son positivos. Esto 
+# podr??a sugerir que la diferencia real de proporciones es positiva, es decir, para las 
+# personas que tomaron aspirina, parece haber un menor riesgo de infarto.
+
+# Riesgo relativo: Es una porporcion de probabilidades
+#
+# Obtenemos el riesgo relativo para el mismo ejemplo
+(RR <- p1/p2)
+# Esto indica que la proporci??n de casos de infarto es 81.78% mayor para el grupo que tom?? 
+# placebo
+(E <- z.alphamedios*(sqrt((1-p1)/(n1*p1)+(1-p2)/(n2*p2))))
+intconf<- log(p1/p2)+c(-E,E); names(intconf)<-NULL
+intconf
+# Aplicando la funci??n exponencial obtenemos un intervalo de confianza para RR
+exp(intconf)
+# Con una confianza del 95%, podemos asegurar que la proporci??n de casos de infarto para 
+# aquellos que tomaron placebo es entre 1.43 y 2.3 mayor que la proporci??n de aquellos que 
+# tomaron aspirina. Esto indica que el riesgo de infarto es al menos 43% superior para los 
+# del grupo placebo.
+
+# Ejemplo raz??n de momios , un exito es x veces mas probables que un fracaso
+# 
+# Para las personas que tomaron placebo, los momios son
+Omega1<- Aspinf[1,1]/Aspinf[1,2]; names(Omega1)<-NULL ; Omega1
+# Es decir, hubieron 1.74 casos de infarto por cada 100 casos sin infarto.
+# Para aquellos que tomaron aspirina:
+Omega2<- Aspinf[2,1]/Aspinf[2,2]; names(Omega2)<-NULL ; Omega2
+# Entonces hubieron 0.95 infartos por cada 100 casos sin infarto.
+
+# Calculamos la raz??n de momios muestral:
+(RMm <- Omega1/Omega2)
+# S??lo para verificar:
+(rz.prodcruzado <- (Aspinf[1,1]*Aspinf[2,2])/(Aspinf[1,2]*Aspinf[2,1])) 
+# Entonces los momios fueron 83% m??s grandes para aquellos que tomaron placebo.
+
+# Pr??ctica 10
+# 1. Un grupo de hombres y mujeres fueron encuestados acerca de qu?? har??an si recibieran 
+# (por error) en el correo un billete de 100 d??lares que estaba dirigido a un vecino.
+# ??Lo regresar??an al destinatario original? De 69 hombres, 52 dijeron que s??; de 131 mujeres, 
+# 120 dijeron que s??. Seg??n los datos, ??se puede decir que la proporci??n de los que dijeron 
+# que s?? es diferente para hombres que para mujeres? Construir un intervalo de confianza del 
+# 95% para la diferencia de proporciones
+
+dinero <- matrix(c(52,17,120,11),byrow=T,nrow=2)
+dimnames(dinero) <- list(c("Hombres","Mujeres"),c("Si","No"))
+names(dimnames(dinero)) <- c("Sexo","Regresarlo")
+dinero
+fil <- apply(dinero,1,sum)
+Hom <- fil[1]
+Muj <- fil[2]
+p1 <- dinero[1,1]/Hom 
+p2 <- dinero[2,1]/Muj
+diferencia <- p1-p2;names(diferencia) <- "Diferencia"
+(SE <- sqrt(p1*(1-p1)/dinero[1,1]+p2*(1-p2)/dinero[1,2]))
+a <- .05
+z <- qnorm(1-a/2)
+E <- z*SE; names(E) <- "Error de estimacion"
+inter <- diferencia+c(-E,E);names(inter) <- NULL
+inter
+
+
+# 2. Consid??rense dos estudios publicados en cierto peri??dico:
+# a) Un estudio brit??nico report?? que, de los fumadores que a los que les da c??ncer, "Las mujeres
+# son 1.71 veces m??s vulnerables que los hombres de tener c??ncer de c??lulas peque??as". Este 
+# valor de 1.71 ??es una raz??n de momios o un riesgo relativo?
+Es un riesgo relativo
+# b) Cierto instituto realiz?? un estudio acerca del uso del f??rmaco "tamoxifen" y c??ncer de 
+# mama. Se report?? que las mujeres que tomaban "tamoxifen" eran 45% menos probables de tener 
+# c??ncer invasivo de mama, comparadas con aquellas que tomaron placebo. Calcular 
+# i) El riesgo relativo para aquellas que tomaron el f??rmaco comparadas con las que tomaron 
+# placebo
+cancer<-matrix(c(.55,1),ncol=1)
+dimnames(cancer)<-list(c("Tamoxifen","Placebo"),"Probabilidad")
+cancer[2,1]/cancer[1,1]
+# ii)El riesgo relativo para aquellas que tomaron placebo comparadas con las que tomaron 
+# el f??rmaco.
+cancer[1,1]/cancer[2,1]
+
+# 3. Un investigador est?? interesado en determinar si hay una relaci??n entre el fumar y 
+# nacimientos prematuros. Se hace un muestreo ente 1000 beb??s prematuros y 1000 beb??s no 
+# prematuros. Se encuentra que 250 madres de los prematuros fumaron y 100 de las madres de 
+# los no prematuros fumaron.
+fumar<-matrix(c(250,100,750,900),ncol=2)
+dimnames(fumar)<-list(c("Prematuros","No prematuros"),c("Si","No"))
+names(dimnames(fumar))<-c("Bebes","Fumar")
+
+# a) Encontrar la diferencia de proporciones y dar un intervalo de confianza del 95%
+fila<-apply(fumar,1,sum)
+p1<-fumar[1,1]/fila[1];p1
+p2<-fumar[2,1]/fila[2];p2
+dif<-p1-p2;names(dif)<-"Proporcion"
+dif #Diferencia
+SE <- sqrt((p1*(1-p1))/fumar[1,1]+(p2*(1-p2))/fumar[2,1]) ; names(SE)<-NULL
+alpha <- 0.05
+z.alphamedios <- qnorm(1-alpha/2)
+(E <- z.alphamedios*SE) #Error
+diferencia + c(-E,E) #Intervalo de confianza
+
+# b) Encontrar el riesgo relativo y dar un intervalo de confianza del 95%
+riesrela<-p1/p2
+names(riesrela)<-NULL
+riesrela
+# es 1.5 veces mayor de que el bebe sea prematuro cuando la madre es fumadora
+(E <- z.alphamedios*(sqrt((1-p1)/(fila[1]*p1)+(1-p2)/(fila[2]*p2))))
+intconf<- log(p1/p2)+c(-E,E); names(intconf)<-NULL
+intconf
+exp(intconf) #Intervalo de confianza
+#Var??a entre 1.0169 y 2.0987
+
+# c) Encontrar la raz??n de momios.
+momio<-p1/(1-p1);names(momio)<-NULL;momio #es tres veces mas probable que nazca una bebe
+#prematuro cuando la mama fuma
+
+# d) Interpretar los incisos anteriores.
