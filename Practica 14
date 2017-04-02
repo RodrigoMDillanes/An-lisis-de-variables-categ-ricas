@@ -1,0 +1,19 @@
+anio <- 1975:2003
+ano <- 0:28
+trainkm <- c(518,516,508,503,505,487,463,437,423,415,425,430,439,431,436,443,397,414,418,
+389,401,372,417,430,426,430,425,426,436)
+trainkm <- rev(trainkm)
+trainroad_collisions <- c(2,12,8,4,3,2,2,3,7,3,5,13,6,4,
+                          4,2,6,4,4,4,2,2,1,4,2,3,4,3,3)
+collisions <- data.frame(cbind(anio,ano,trainkm,trainroad_collisions))
+
+fit <- glm(collisions$trainroad_collisions~collisions$ano,offset = log(collisions$trainkm),family = poisson(link = log))
+summary(fit)
+exp(fit$coefficients)
+#modelo 
+predecir <- function(modelog,year){
+  valor <- exp(modelog$coefficients[1])*exp(modelog$coefficients[2]*year)
+  return(valor)
+}
+predecir(fit,0)
+predecir(fit,28)
