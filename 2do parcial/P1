@@ -1,0 +1,60 @@
+tabla <- read.csv("/Users/rodrigomondragondillanes/Documents/An??lisis de variables categ??ricas/crab.txt",header=T,sep="\t")
+# Color: 1-ligero medio, 2-medio, 3-obscuro medio, 4-obscuro
+# Estado de las espinas: 1-bueno en ambas, 2-una deteriorada o rota, 3-ambas deterioradas o rotas
+# Anchura del caparaz??n en cm.
+# N??mero de sat??lites
+# Peso en gramos
+names(tabla)
+(tabla$satel.bin <- ifelse(tabla$Satelites > 0, 1, 0)) #Que tiene al menos un satelite
+crab.fit.logit <- glm(tabla$satel.bin ~ tabla$Anchura,family=binomial, data=tabla)
+tabla$An.fac <- cut(tabla$Anchura, breaks=c(0,seq(23.25,29.25),Inf))
+#Ahora calculamos la proporcin de cangrejos que tienen al menos un satlite
+#para cada grupo de anchura de caparaz ??on
+(prop <- aggregate(tabla$satel.bin, by=list(W=tabla$An.fac),mean)$x)
+#Para calcular la anchura media del caparaz ??on en cada grupo de anchura
+plot.x <- aggregate(tabla$Anchura, by=list(W=tabla$An.fac),mean)$x
+x11()
+plot(y=prop,x=plot.x,pch=16,type="p",xlab=expression(paste("Anchura, ",italic(x), "cm")), ylab=expression(paste("Proporcion de satelites ",{~pi},"(x)")),ylim=c(0,1),xlim=c(20,34)) 
+ind <- order(tabla$Anchura) 
+lines(x=tabla$Anchura[ind],y=predict(crab.fit.logit,type="response")[ind],type="l",lty=3)
+
+#Calculamos intervalos de confianza para los par ??ametros del modelo
+library(MASS)
+confint(crab.fit.logit)
+#Para estimar las probabilidades de que la respuesta sea igual a 1
+crab.predict <- predict(crab.fit.logit,type="response",se=T) # el se es para que tambien haga el calculo del error estandar
+
+#Graficando los intervalos de confianza
+ind <- order(tabla$Anchura)
+x11()
+par(family="sans")
+plot(tabla$Anchura[ind],crab.predict$fit[ind],axes=F,type="l", xlim=c(20,33),ylab="Prob. de tener al menos un s") 
+axis(2,at=seq(0,1,0.2))
+axis(1,at=seq(20,32,2)) 
+lines(tabla$Anchura[ind],crab.predict$fit[ind]-1.96*crab.predict$se[ind],lty=3,col="blue",lwd=2) 
+lines(tabla$Anchura[ind],crab.predict$fit[ind]+1.96*crab.predict$se[ind],lty=3,col="blue",lwd=2)
+
+
+summary(crab.fit.logit)
+#Nos da los valores de alpha y beta
+#As?? los momios estimados para cada cent ????metro de incremento de anchura en el caparaz ??on implic????
+#a multiplicar por e???? = e0.497 = 1.64. En otras palabras, hay un incremento del 64% de la probabilidad 
+#de tener 1 sat ??elite por cada incremento de u??    ro de anchura.
+crab.fit.logit$coefficients
+
+############### PRACTICA 1
+#1.- Calcular ????(26.3)
+x <- 26.3
+(piest <- (exp(crab.fit.logit$coefficients[1]+crab.fit.logit$coefficients[2]*x))/(1+exp(crab.fit.logit$coefficients[1]+crab.fit.logit$coefficients[2]*x)))
+#2.- Calcular los momios correspondientes.
+momio <- piest/(1-piest);names(momio)<-"Momio"
+momio
+(mom <-exp(crab.fit.logit$coefficients[1])*exp(crab.fit.logit$coefficients[2])^ x)
+#3.- Si x aumenta una unidad, calcular ????(x)
+x <- 27.3
+(piest <- (exp(crab.fit.logit$coefficients[1]+crab.fit.logit$coefficients[2]*x))/(1+exp(crab.fit.logit$coefficients[1]+crab.fit.logit$coefficients[2]*x)))
+#4.- Con base en el resultado del punto anterior, calcular los momios.
+(momio2 <- momio*exp(crab.fit.logit$coefficients[2]))
+#5.- Con base en el resultado del punto anterior, calcular el valor de ??
+beta <- log(momio2/momio)
+beta
