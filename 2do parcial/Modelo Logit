@@ -1,0 +1,131 @@
+## librer??as requeridas
+install.packages("aod")
+# install.packages("ggplot2")
+library(aod)
+library(ggplot2)
+
+## Ejemplo
+# Un investigador est?? interesado en c??mo variables como GRE (Graduate Record Exam), 
+# GPA (Grade Point Average) y prestigio del instituto donde se curs?? la licenciatura 
+# afecta la admisi??n a un posgrado. La variable dependiente (admitido/ no admitido) 
+# es claramente binaria.
+
+## Datos
+mydata <- read.csv("http://www.ats.ucla.edu/stat/data/binary.csv")
+# Para ver las primeras filas de los datos
+head(mydata)
+# Este conjunto de datos tiene una variable dependiente binaria llamada "admit".
+# Hay 3 variables independientes: "gre","gpa" y "rank". Las variables "gre" y "gpa" 
+# ser??n tratadas como continuas. La variable "rank" toma valores del 1 al 4. El valor 
+# 1 representa el prestigio m??s alto. 
+# Para obtener las desviaciones est??ndar usamos el comando "sapply" y la funci??n "sd"
+summary(mydata)
+sapply(mydata, sd)
+# Obtenemos una tabla de contingencia basada en las variables "admit" y "rank"
+xtabs(~admit + rank, data = mydata)
+
+## Modelo logit
+# Primero se trata a la variable "rank" como una variable categ??rica
+mydata$rank <- factor(mydata$rank) #la convertimos en categorica
+mylogit <- glm(admit ~ gre + gpa + rank, data = mydata, family = "binomial")
+summary(mylogit)
+# En el resultado del comando anterior se observa que R especifica qu?? modelo fue 
+# utilizado y cu??les fueron las opciones elegidas.
+# Luego se observan los "deviance residuals", los cuales son una medida del ajuste 
+# del modelo. 
+# La siguiente parte muestra los coeficientes, los errores est??ndar, el estad??stico 
+# z y los valores-p asociados. Tanto "gre" como "gpa" son estad??sticamente significa-
+# tivos, as?? como tres t??rminos de "rank"
+# Los coeficientes de la regresi??n log??stica dan el cambio en los log-momios por cada 
+# aumento de una unidad en la variable predictora.
+# Por cada cambio de unidad en "gre", los log-momios de admisi??n (contra no-admisi??n) 
+# se incrementan en 0.002.
+# Por cada unidad incrementada en "gpa", los log-momios de ser admitido a un posgrado 
+# se incrementa en 0.804
+# El indicador de la variable "rank" tiene una interpretaci??n ligeramente diferente.
+# Por ejemplo, el haber asistido a una instituci??n con "rank" 2, contra una con "rank" 
+# igual a 1, cambia los log-momios en -0.675
+
+# Para obtener los intervalos de confianza para los estimados de los coeficientes:
+# Usando log-verosimilitud
+confint(mylogit)
+# Usando errores est??ndar
+confint.default(mylogit)
+
+# Se puede probar el efecto general de "rank" usando el comando "wald.test" (de la 
+# librer??a "aod"). El orden en el cual los coeficientes son dados en la tabla es el 
+# mismo que en el modelo. Esto es importante ya que "wald.test" se refiere a los 
+# coeficientes de acuerdo a su orden en el modelo. En el comando "b" aporta los 
+# coeficientes, mientras que "Sigma" da la matriz de covarianza de los errores de los 
+# t??rminos. "Terms" determina cu??les de los t??rminos del modelo ser??n probados. 
+# En este caso, los t??rminos 4, 5 y 6 son los tres t??rminos para los niveles de "rank"
+library(aod)
+wald.test(b = coef(mylogit), Sigma = vcov(mylogit), Terms = 4:6) #el vcov mat de covarianza de lso errores,el Term es para especificar los terminos que van a ser probados
+# El estad??stico ji-cuadrado es de valor 20.9 con tres grados de libertad con un 
+# valor-p asociado de 0.00011, lo cual indica que el efecto general de "rank" es 
+# estad??sticamente significativo.
+#El efecto que tiene la var rank es sobre elmodelo es significativo
+
+# Tambi??n se pueden probar hip??tesis adicionales acerca de las diferencias en los
+# coeficientes para los diferentes niveles de "rank". Por ejemplo, si se quiere 
+# probar que los coeficientes para "rank=2" son iguales a los coeficientes para 
+# "rank=3". 
+# Primero se crea un vector "l" que define la prueba que se quiere realizar. En este 
+# caso se desea probar la diferencia de los t??rminos para "rank=2" y "rank=3" 
+# (i.e. el cuarto y quinto t??rminos del modelo). Para contrastar estos dos t??rminos, 
+# se multiplica uno de ellos por 1 y el otro por -1. Los otros t??rminos en el modelo 
+# no est??n involucrados en la prueba, por lo cual son multiplicados por 0. 
+# Al ejecutar "L=l", se especifica a R que se desea basar la prueba en el vector "l"
+l <- cbind(0, 0, 0, 1, -1, 0) #Defiiendo el vector
+wald.test(b = coef(mylogit), Sigma = vcov(mylogit), L = l)
+# El valor del estad??stico ji-cuadrado es de 5.5 con 1 grado de libertad con un 
+# valor-p asociado de 0.019, lo que indica que la diferencia entre los coeficientes 
+# para "rank=2" y los coeficientes para "rank=3" es estad??sticamente significativa.
+
+# Se puede elevar al valor "e" para interpretarlos como razones de momios. 
+# Razones de momios:
+exp(coef(mylogit))
+# Razones de momios y un intervalo de confianza del 95%
+exp(cbind(OR = coef(mylogit), confint(mylogit)))
+
+# Ahora se puede decir que por cada unidad de incremento en "gpa", los momios de ser 
+# admitido a un posgrado (vs. no ser admitido) se incrementan en un factor de 2.23.
+
+# Tambi??n se pueden usar las predicciones de las probabilidades para entender el 
+# modelo.
+# Se calculan, primero, las predicciones de las probabilidades en cada valor de 
+# "rank", manteniendo "gre" y "gpa" en sus medias.
+newdata1 <- with(mydata, data.frame(gre = mean(gre), gpa = mean(gpa), rank = factor(1:4))) #el with es como del attach,
+#mydata es la base
+newdata1
+
+# "newdata1$rankP" sirve para indicarle a R que se desea crear una nueva variable 
+# en el conjunto de datos.
+newdata1$rankP <- predict(mylogit, newdata = newdata1, type = "response")
+newdata1
+# Se puede observar que la predicci??n de la probabilidad de ser aceptado en un 
+# posgrado es 0.52 para estudiantes que asistieron a instituciones de mayor 
+# prestigio ("rank=1") y de 0.18 para estudiantes que asistieron a intituciones con
+# "rank=4".
+# Se puede hacer algo similar haciendo variar los valores de "gre" y "rank".
+# Por ejemplo, si se crean 100 valores para "gre" (entre 200 y 800) en cada 
+# valor de "rank"
+newdata2 <- with(mydata, data.frame(gre = rep(seq(from = 200, to = 800, length.out = 100),
+                                              4), gpa = mean(gpa), rank = factor(rep(1:4, each = 100))))
+# Para generar las predicciones, usando errores est??ndar (para graficar intervalos 
+# de confianza):
+newdata3 <- cbind(newdata2, predict(mylogit, newdata = newdata2, type = "link",
+                                    se = TRUE))
+newdata3 <- within(newdata3, { 
+  PredictedProb <- plogis(fit)
+  LL <- plogis(fit - (1.96 * se.fit))
+  UL <- plogis(fit + (1.96 * se.fit))
+})
+head(newdata3)
+
+# Tambi??n puede resultar ??til usar gr??ficas de las predicciones de las probabilidades 
+# para comprender el modelo.
+x11()
+ggplot(newdata3, aes(x = gre, y = PredictedProb)) + geom_ribbon(aes(ymin = LL,
+                                                                    ymax = UL, fill = rank), alpha = 0.2) + geom_line(aes(colour = rank),
+                                                                                                                      size = 1)
